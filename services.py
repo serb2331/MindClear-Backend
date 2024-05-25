@@ -15,7 +15,7 @@ def createUser(data, sqlConnector):
     companies = sqlConnector.search("companies", {"company_name": company})
     companyNumber = companies[0][0]
 
-    typeOfUser = data["typeOfUser"]
+    typeOfUser = "employee"
 
     email = data["email"]
     sqlConnector.insert("users", {"login_code": "placeholder", "type": typeOfUser, "email": email})
@@ -93,13 +93,22 @@ def signupHandler(requestData, sqlConnector):
 def getAddedEmployees(requestData, sqlConnector):
     id = requestData["userId"]
     users = sqlConnector.search("users", {"id": id})
+
+    print(users)
     companyid = users[0][5]
+
     company = sqlConnector.search("companies", {"id": id})
     companyName = company[0][1]
-    data = {"company": companyName, "employees": []}
+    data = {"company": companyName, "managers": [], "employees": []}
 
-    # employees = sqlConnector.search("users", {"company": companyid})
-    # for employee in employees:
+    managers = sqlConnector.search("users", {"company": companyid, "type": "manager"})
+    for manager in managers:
+        employeeData = {"firstName": manager[6], "lastName": manager[7]}
+        data["managers"].append(employeeData)
 
+    employees = sqlConnector.search("users", {"company": companyid, "type": "employee"})
+    for employee in employees:
+        managerData = {"firstName": employee[6], "lastName": employee[7]}
+        data["employees"].append(managerData)
 
-    pass
+    return data
