@@ -68,6 +68,8 @@ def signupHandler(requestData, sqlConnector):
     print(email)
     print(company)
     sqlConnector.insert("companies", {"company_name": company})
+    companies = sqlConnector.search("companies", {"company_name": company})
+    companyNumber = companies[0][0]
 
     if not isEmailValid(email):
         return {"code": 4, "message": "Email invalid."}
@@ -75,7 +77,7 @@ def signupHandler(requestData, sqlConnector):
         return {"code": 1, "message": "Email already exists."}
     hashedPassword = createHashedCode(password)
 
-    data = {"email": email, "type": "manager", "password": hashedPassword}
+    data = {"email": email, "type": "manager", "password": hashedPassword, "company": companyNumber}
 
     if sqlConnector.insert("users", data) == 0:
         return {"code": 0, "message": "Success."}
