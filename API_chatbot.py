@@ -15,34 +15,24 @@ with open("gpt-prompt.txt") as file:
 
 conversation=[{"role": "system", "content": gpt_prompt}]
 
-while True:
+def generateResponse(user_input: str) -> str:
+    conversation.append({"role": "system", "content": user_input})
+    
     question = client.chat.completions.create(
         model=os.getenv("AZURE_OPENAI_MODEL"),
         messages=conversation,
         temperature=1.5
     )
-    print("\n" + question.choices[0].message.content + "\n")
     conversation.append({"role": "assistant", "content": question.choices[0].message.content})
+    return question.choices[0].message.content
 
-    user_input = input("Ans:  >>  ")      
-    conversation.append({"role": "user", "content": f"{user_input}"})
+def finishConversation() -> int:
+    conversation.append({"role": "system", "content": "done"})
     
-    if user_input == "done":
-        break
-
-conversation.append({"role": "user", "content": "done"})
+    question = client.chat.completions.create(
+        model=os.getenv("AZURE_OPENAI_MODEL"),
+        messages=conversation,
+        temperature=0.2
+    )
     
-result = client.chat.completions.create(
-    model=os.getenv("AZURE_OPENAI_MODEL"),
-    messages=conversation,
-    temperature=0.2
-)
-
-print(result.choices[0].message.content)
-    
-    
-
-
-# #print(response)
-# print(response.model_dump_json(indent=2))
-# print(response.choices[0].message.content)
+    return int(question.choices[0].message.content)
