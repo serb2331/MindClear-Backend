@@ -82,6 +82,20 @@ def getEmployeesStressLevel_API():
         return jsonify({"message": "Method not allowed"}), 405
 
 
+@app.route('/api/startConversation', methods=['GET'])
+def startConversation_API():
+    if request.method == 'GET':
+        conversation_id = session.get('conversation_id', None)
+        if not conversation_id:
+            conversation_id = 'conv_' + str(int(time.time()))
+            session['conversation_id'] = conversation_id
+
+        resultData = services.createConversation(sqlConnector, conversations, conversation_id)
+        return jsonify(resultData)
+    else:
+        return jsonify({"message": "Method not allowed"}), 405
+
+
 @app.route('/api/getNextMessage', methods=['POST'])
 def getNextMessage_API():
     if request.method == 'POST':

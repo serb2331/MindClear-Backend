@@ -148,4 +148,15 @@ def getNextMessage(requestData, sqlConnector, conversations, conversation_id):
     return data
 
 
+def createConversation(sqlConnector, conversations, conversation_id):
+    if conversation_id not in conversations:
+        conversations[conversation_id] = {}
+        conversations[conversation_id]["inbound"] = []
+        conversations[conversation_id]["outbound"] = []
 
+    response = "Hi. How are you feeling today?"
+    conversations[conversation_id]["inbound"].append(str(response))
+
+    data = {"response": response}
+
+    return data
