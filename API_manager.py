@@ -7,12 +7,12 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 CORS(app)
 
-sqlConnection = None
+sqlConnector = None
 
 def runFlask(sqlConnectionInit):
-    global sqlConnection
-    sqlConnection = sqlConnectionInit
-    sqlConnection.connect()
+    global sqlConnector
+    sqlConnector = sqlConnectionInit
+    sqlConnector.connect()
     app.run(host='0.0.0.0', debug=True)
 
 @app.route('/api/test', methods=['GET', 'POST'])
@@ -32,7 +32,7 @@ def test():
 def createUserCode_API():
     if request.method == 'POST':
         requestData = request.get_json()
-        userCode = services.createUser(requestData, sqlConnection)
+        userCode = services.createUser(requestData, sqlConnector)
         print(userCode)
         # TODO send email
         resultData = {"status": 1}
@@ -44,7 +44,7 @@ def createUserCode_API():
 def login_API():
     if request.method == 'POST':
         requestData = request.get_json()
-        resultData = services.loginHandler(requestData, sqlConnection)
+        resultData = services.loginHandler(requestData, sqlConnector)
         return jsonify(resultData)
     else:
         return jsonify({"message": "Method not allowed"}), 405
@@ -53,7 +53,7 @@ def login_API():
 def signup_API():
     if request.method == 'POST':
         requestData = request.get_json()
-        resultData = services.signupHandler(requestData, sqlConnection)
+        resultData = services.signupHandler(requestData, sqlConnector)
         return jsonify(resultData)
     else:
         return jsonify({"message": "Method not allowed"}), 405

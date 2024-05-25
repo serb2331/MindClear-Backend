@@ -10,16 +10,16 @@ def createHashedCode(unique_code):
     hashed_code = bcrypt.hashpw(unique_code.encode(), salt)
     return hashed_code
 
-def createUser(data, sqlConnection):
+def createUser(data, sqlConnector):
     company = data["company"]
-    companies = sqlConnection.search("companies", {"company_name": company})
+    companies = sqlConnector.search("companies", {"company_name": company})
     companyNumber = companies[0][0]
 
     typeOfUser = data["typeOfUser"]
 
     email = data["email"]
-    sqlConnection.insert("users", {"login_code": "placeholder", "type": typeOfUser, "email": email})
-    users = sqlConnection.search("users", {"email": email})
+    sqlConnector.insert("users", {"login_code": "placeholder", "type": typeOfUser, "email": email})
+    users = sqlConnector.search("users", {"email": email})
     userPersonalId = users[0][0]
 
     firstName = data["firstName"]
@@ -36,7 +36,7 @@ def createUser(data, sqlConnection):
 
     hashed_code = createHashedCode(unique_code)
 
-    sqlConnection.update("users", {"login_code": hashed_code}, {"email": email})
+    sqlConnector.update("users", {"login_code": hashed_code}, {"email": email})
 
     return unique_code
 
@@ -64,6 +64,9 @@ def isEmailValid(email):
 def signupHandler(requestData, sqlConnector):
     email = requestData["email"]
     password = requestData["password"]
+    company = requestData["company"]
+
+    sqlConnector.insert("companies", {"company": company})
 
     if not isEmailValid(email):
         return {"code": 4, "message": "Email invalid."}
