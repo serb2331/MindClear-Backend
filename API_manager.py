@@ -57,3 +57,12 @@ def signup_API():
         return jsonify(resultData)
     else:
         return jsonify({"message": "Method not allowed"}), 405
+
+@app.route('/api/getAddedEmployees', methods=['POST'])
+def getAddedEmployees_API():
+    if request.method == 'POST':
+        requestData = request.get_json()
+        resultData = services.getAddedEmployees(requestData, sqlConnector)
+        return jsonify(resultData)
+    else:
+        return jsonify({"message": "Method not allowed"}), 405

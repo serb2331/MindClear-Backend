@@ -87,3 +87,19 @@ def signupHandler(requestData, sqlConnector):
         return {"code": 0, "message": "Success."}
     else:
         return {"code": 5, "message": "Sql error. "}
+
+
+
+def getAddedEmployees(requestData, sqlConnector):
+    id = requestData["userId"]
+    users = sqlConnector.search("users", {"id": id})
+    companyid = users[0][5]
+    company = sqlConnector.search("companies", {"id": id})
+    companyName = company[0][1]
+    data = {"company": companyName, "employees": []}
+
+    # employees = sqlConnector.search("users", {"company": companyid})
+    # for employee in employees:
+
+
+    pass
