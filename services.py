@@ -5,6 +5,7 @@ import bcrypt
 from random import randint
 
 
+
 def createHashedCode(unique_code):
     salt = bcrypt.gensalt()
     hashed_code = bcrypt.hashpw(unique_code.encode(), salt)
@@ -129,3 +130,22 @@ def getEmployeesStressLevel(requestData, sqlConnector):
             employeeData["stress"].append(n)
         data["employees"].append(employeeData)
     return data
+
+def getNextMessage(requestData, sqlConnector, conversations, conversation_id):
+    message = requestData["message"]
+    if conversation_id not in conversations:
+        conversations[conversation_id] = {}
+        conversations[conversation_id]["inbound"] = []
+        conversations[conversation_id]["outbound"] = []
+
+    conversations[conversation_id]["outbound"].append(str(message))
+
+    response = str(message) + " idk !!!!"
+    conversations[conversation_id]["inbound"].append(str(response))
+
+    data = {"response": response}
+
+    return data
+
+
+
