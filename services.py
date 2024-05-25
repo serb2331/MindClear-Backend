@@ -51,9 +51,11 @@ def loginHandler(requestData, sqlConnector):
         user = sqlConnector.search("users", {"email": email})
         for row in user:
             id = row[0]
+            firstName = row[6]
+            lastName = row[7]
             passwordToCheck = row[4].encode('utf-8')
             if bcrypt.checkpw(password.encode('utf-8'), passwordToCheck):
-                return {"code": 0, "userId": id, "message": "Success."}
+                return {"code": 0, "userId": id, "firstName": firstName, "lastName": lastName,"message": "Success."}
         return {"code": 1, "message": "Email or password is incorrect."}
     else:
         return {"code": 2, "message": "Account doesn't exist."}
@@ -65,6 +67,8 @@ def signupHandler(requestData, sqlConnector):
     email = requestData["email"]
     password = requestData["password"]
     company = requestData["company"]
+    lastName = requestData["lastName"]
+    firstName = requestData["firstName"]
     print(email)
     print(company)
     sqlConnector.insert("companies", {"company_name": company})
@@ -77,9 +81,9 @@ def signupHandler(requestData, sqlConnector):
         return {"code": 1, "message": "Email already exists."}
     hashedPassword = createHashedCode(password)
 
-    data = {"email": email, "type": "manager", "password": hashedPassword, "company": companyNumber}
+    data = {"email": email, "type": "manager", "password": hashedPassword, "company": companyNumber, "firstName": firstName, "lastName": lastName}
 
     if sqlConnector.insert("users", data) == 0:
         return {"code": 0, "message": "Success."}
     else:
-        return {"code": 5, "message": "Sql error."}
+        return {"code": 5, "message": "Sql error. "}
