@@ -7,8 +7,12 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 CORS(app)
 
+sqlConnection = None
 
-def runFlask():
+def runFlask(sqlConnectionInit):
+    global sqlConnection
+    sqlConnection = sqlConnectionInit
+    sqlConnection.connect()
     app.run(host='0.0.0.0', debug=True)
 
 @app.route('/api/test', methods=['GET', 'POST'])
