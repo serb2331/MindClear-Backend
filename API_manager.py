@@ -66,3 +66,12 @@ def getAddedEmployees_API():
         return jsonify(resultData)
     else:
         return jsonify({"message": "Method not allowed"}), 405
+
+@app.route('/api/getEmployeesStressLevel', methods=['POST'])
+def getEmployeesStressLevel_API():
+    if request.method == 'POST':
+        requestData = request.get_json()
+        resultData = services.getEmployeesStressLevel(requestData, sqlConnector)
+        return jsonify(resultData)
+    else:
+        return jsonify({"message": "Method not allowed"}), 405
