@@ -110,5 +110,5 @@ def getAddedEmployees(requestData, sqlConnector):
     for employee in employees:
         managerData = {"firstName": employee[6], "lastName": employee[7]}
         data["employees"].append(managerData)
-
+    print(data)
     return data
