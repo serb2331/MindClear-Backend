@@ -65,7 +65,8 @@ def signupHandler(requestData, sqlConnector):
     email = requestData["email"]
     password = requestData["password"]
     company = requestData["company"]
-
+    print(email)
+    print(company)
     sqlConnector.insert("companies", {"company_name": company})
 
     if not isEmailValid(email):
