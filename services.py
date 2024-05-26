@@ -165,11 +165,12 @@ def getNextMessage(requestData, sqlConnector, conversations, conversation_id):
         conversations[conversation_id].startConversation()
 
     response = conversations[conversation_id].generateResponse(message)
-    data = {"response": response}
     if ( message == "done"):
             global stressLevel
-            stressLevel = int(data["response"])
+            stressLevel = int(response)
+            response = "Thanks for the discussion."
 
+    data = {"response": response}
     return data
 
 
