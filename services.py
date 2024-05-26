@@ -3,6 +3,8 @@ import re
 
 import bcrypt
 from random import randint
+from API_chatbot import ChatBot
+
 
 
 def createHashedCode(unique_code):
@@ -15,7 +17,7 @@ def createUser(data, sqlConnector):
     companies = sqlConnector.search("companies", {"company_name": company})
     companyNumber = companies[0][0]
 
-    typeOfUser = data["typeOfUser"]
+    typeOfUser = "employee"
 
     email = data["email"]
     sqlConnector.insert("users", {"login_code": "placeholder", "type": typeOfUser, "email": email})
@@ -51,9 +53,11 @@ def loginHandler(requestData, sqlConnector):
         user = sqlConnector.search("users", {"email": email})
         for row in user:
             id = row[0]
+            firstName = row[6]
+            lastName = row[7]
             passwordToCheck = row[4].encode('utf-8')
             if bcrypt.checkpw(password.encode('utf-8'), passwordToCheck):
-                return {"code": 0, "userId": id, "message": "Success."}
+                return {"code": 0, "userId": id, "firstName": firstName, "lastName": lastName,"message": "Success."}
         return {"code": 1, "message": "Email or password is incorrect."}
     else:
         return {"code": 2, "message": "Account doesn't exist."}
@@ -65,6 +69,8 @@ def signupHandler(requestData, sqlConnector):
     email = requestData["email"]
     password = requestData["password"]
     company = requestData["company"]
+    lastName = requestData["lastName"]
+    firstName = requestData["firstName"]
     print(email)
     print(company)
     sqlConnector.insert("companies", {"company_name": company})
@@ -77,9 +83,73 @@ def signupHandler(requestData, sqlConnector):
         return {"code": 1, "message": "Email already exists."}
     hashedPassword = createHashedCode(password)
 
-    data = {"email": email, "type": "manager", "password": hashedPassword, "company": companyNumber}
+    data = {"email": email, "type": "manager", "password": hashedPassword, "company": companyNumber, "firstName": firstName, "lastName": lastName}
 
     if sqlConnector.insert("users", data) == 0:
         return {"code": 0, "message": "Success."}
     else:
-        return {"code": 5, "message": "Sql error."}
+        return {"code": 5, "message": "Sql error. "}
+
+
+
+def getAddedEmployees(requestData, sqlConnector):
+    id = requestData["userId"]
+    users = sqlConnector.search("users", {"id": id})
+    companyid = users[0][5]
+
+    company = sqlConnector.search("companies", {"id": id})
+    companyName = company[0][1]
+    data = {"company": companyName, "managers": [], "employees": []}
+
+    managers = sqlConnector.search("users", {"company": companyid, "type": "manager"})
+    for manager in managers:
+        employeeData = {"firstName": manager[6], "lastName": manager[7]}
+        data["managers"].append(employeeData)
+
+    employees = sqlConnector.search("users", {"company": companyid, "type": "employee"})
+    for employee in employees:
+        managerData = {"firstName": employee[6], "lastName": employee[7]}
+        data["employees"].append(managerData)
+    print(data)
+    return data
+
+
+def getEmployeesStressLevel(requestData, sqlConnector):
+    id = requestData["userId"]
+    users = sqlConnector.search("users", {"id": id})
+    companyid = users[0][5]
+
+    company = sqlConnector.search("companies", {"id": id})
+    companyName = company[0][1]
+    data = {"company": companyName, "employees": []}
+
+    employees = sqlConnector.search("users", {"company": companyid, "type": "employee"})
+    for employee in employees:
+        employeeData = {"firstName": employee[6], "lastName": employee[7], "stress": []}
+        for i in range(5):
+            n = randint(0, 100)
+            employeeData["stress"].append(n)
+        data["employees"].append(employeeData)
+    return data
+
+def getNextMessage(requestData, sqlConnector, conversations, conversation_id):
+    message = requestData["message"]
+    if conversation_id not in conversations:
+        conversations[conversation_id] = ChatBot()
+        conversations[conversation_id].startConversation()
+
+    response = conversations[conversation_id].generateResponse(message)
+    data = {"response": response}
+
+    return data
+
+
+def createConversation(sqlConnector, conversations, conversation_id):
+    conversations[conversation_id] = ChatBot()
+    print(conversations)
+
+    response = conversations[conversation_id].startConversation()
+
+    data = {"response": response}
+
+    return data
