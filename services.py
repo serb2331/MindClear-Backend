@@ -135,27 +135,28 @@ def getAddedEmployees(requestData, sqlConnector):
 
 
 def getEmployeesStressLevel(requestData, sqlConnector):
+    # razvan si-a bagat pula in ce  mi-a zis sa ii fac ieri luaias familia in pula respectfully
     global stressLevel
-    id = requestData["userId"]
-    users = sqlConnector.search("users", {"id": id})
-    companyid = users[0][5]
-
-    company = sqlConnector.search("companies", {"id": id})
-    companyName = company[0][1]
-    data = {"company": companyName, "employees": []}
-
-    employees = sqlConnector.search("users", {"company": companyid, "type": "employee"})
-    userNumber = 0
-    for employee in employees:
-        employeeData = {"firstName": employee[6], "lastName": employee[7], "stress": []}
-        for i in range(5):
-            n = randint(0, 10)
-            if userNumber == 0 and i == 4:
-                n = stressLevel
-            userNumber += 1
-            employeeData["stress"].append(n)
-        data["employees"].append(employeeData)
-    return data
+    # id = requestData["userId"]
+    # users = sqlConnector.search("users", {"id": id})
+    # companyid = users[0][5]
+    #
+    # company = sqlConnector.search("companies", {"id": id})
+    # companyName = company[0][1]
+    # data = {"company": companyName, "employees": []}
+    #
+    # employees = sqlConnector.search("users", {"company": companyid, "type": "employee"})
+    # userNumber = 0
+    # for employee in employees:
+    #     employeeData = {"firstName": employee[6], "lastName": employee[7], "stress": []}
+    #     for i in range(5):
+    #         n = randint(0, 10)
+    #         if userNumber == 0 and i == 4:
+    #             n = stressLevel
+    #         userNumber += 1
+    #         employeeData["stress"].append(n)
+    #     data["employees"].append(employeeData)
+    return {"stress": stressLevel}
 
 def getNextMessage(requestData, sqlConnector, conversations, conversation_id):
     message = requestData["message"]
