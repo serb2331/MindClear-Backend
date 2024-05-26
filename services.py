@@ -3,6 +3,7 @@ import re
 
 import bcrypt
 from random import randint
+from API_chatbot import ChatBot
 
 
 
@@ -134,15 +135,10 @@ def getEmployeesStressLevel(requestData, sqlConnector):
 def getNextMessage(requestData, sqlConnector, conversations, conversation_id):
     message = requestData["message"]
     if conversation_id not in conversations:
-        conversations[conversation_id] = {}
-        conversations[conversation_id]["inbound"] = []
-        conversations[conversation_id]["outbound"] = []
+        conversations[conversation_id] = ChatBot()
+        conversations[conversation_id].startConversation()
 
-    conversations[conversation_id]["outbound"].append(str(message))
-
-    response = str(message) + " idk !!!!"
-    conversations[conversation_id]["inbound"].append(str(response))
-
+    response = conversations[conversation_id].generateResponse(message)
     data = {"response": response}
 
     return data
@@ -150,12 +146,10 @@ def getNextMessage(requestData, sqlConnector, conversations, conversation_id):
 
 def createConversation(sqlConnector, conversations, conversation_id):
     if conversation_id not in conversations:
-        conversations[conversation_id] = {}
-        conversations[conversation_id]["inbound"] = []
-        conversations[conversation_id]["outbound"] = []
+        conversations[conversation_id] = ChatBot()
+    print(conversations)
 
-    response = "Hi. How are you feeling today?"
-    conversations[conversation_id]["inbound"].append(str(response))
+    response = conversations[conversation_id].startConversation()
 
     data = {"response": response}
 
