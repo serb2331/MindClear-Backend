@@ -5,7 +5,7 @@ import bcrypt
 from random import randint
 from API_chatbot import ChatBot
 
-
+stressLevel= 10
 
 def createHashedCode(unique_code):
     salt = bcrypt.gensalt()
@@ -135,6 +135,7 @@ def getAddedEmployees(requestData, sqlConnector):
 
 
 def getEmployeesStressLevel(requestData, sqlConnector):
+    global stressLevel
     id = requestData["userId"]
     users = sqlConnector.search("users", {"id": id})
     companyid = users[0][5]
@@ -144,10 +145,14 @@ def getEmployeesStressLevel(requestData, sqlConnector):
     data = {"company": companyName, "employees": []}
 
     employees = sqlConnector.search("users", {"company": companyid, "type": "employee"})
+    userNumber = 0
     for employee in employees:
         employeeData = {"firstName": employee[6], "lastName": employee[7], "stress": []}
         for i in range(5):
             n = randint(0, 10)
+            if userNumber == 0 and i == 4:
+                n = stressLevel
+            userNumber += 1
             employeeData["stress"].append(n)
         data["employees"].append(employeeData)
     return data
@@ -160,6 +165,9 @@ def getNextMessage(requestData, sqlConnector, conversations, conversation_id):
 
     response = conversations[conversation_id].generateResponse(message)
     data = {"response": response}
+    if ( message == "done"):
+            global stressLevel
+            stressLevel = int(data[response])
 
     return data
 
