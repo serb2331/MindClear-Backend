@@ -127,7 +127,7 @@ def getEmployeesStressLevel(requestData, sqlConnector):
     for employee in employees:
         employeeData = {"firstName": employee[6], "lastName": employee[7], "stress": []}
         for i in range(5):
-            n = randint(0, 100)
+            n = randint(0, 10)
             employeeData["stress"].append(n)
         data["employees"].append(employeeData)
     return data
