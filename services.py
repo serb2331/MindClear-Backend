@@ -20,15 +20,17 @@ def createUser(data, sqlConnector):
     typeOfUser = "employee"
 
     email = data["email"]
-    sqlConnector.insert("users", {"login_code": "placeholder", "type": typeOfUser, "email": email})
-    users = sqlConnector.search("users", {"email": email})
-    userPersonalId = users[0][0]
-
     firstName = data["firstName"]
     lastName = data["lastName"]
     dayOfBirth = data["dayOfBirth"]
     monthOfBirth = data["monthOfBirth"]
     yearOfBirth = data["yearOfBirth"]
+
+    sqlConnector.insert("users", {"login_code": "placeholder", "type": typeOfUser, "email": email, "company": companyNumber, "firstName": firstName, "lastName": lastName})
+    users = sqlConnector.search("users", {"email": email})
+    userPersonalId = users[0][0]
+
+
 
     randomNumber = randint(3, 613)
 
