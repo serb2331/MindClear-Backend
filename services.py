@@ -47,7 +47,7 @@ def sendUniqueCode(code):
 
 def loginHandler(requestData, sqlConnector):
     email = requestData["email"]
-    password = requestData["password"]
+    password = requestData["code"]
 
     if sqlConnector.isDataInTable("users", {"email": email}) is True:
         user = sqlConnector.search("users", {"email": email})
@@ -61,6 +61,24 @@ def loginHandler(requestData, sqlConnector):
         return {"code": 1, "message": "Email or password is incorrect."}
     else:
         return {"code": 2, "message": "Account doesn't exist."}
+
+def employeeLoginHandler(requestData, sqlConnector):
+
+    email = requestData["employeeEmail"]
+    password = requestData["employeeCode"]
+    if sqlConnector.isDataInTable("users", {"email": email}) is True:
+        user = sqlConnector.search("users", {"email": email})
+        for row in user:
+            id = row[0]
+            firstName = row[6]
+            lastName = row[7]
+            passwordToCheck = row[1].encode('utf-8')
+            if bcrypt.checkpw(password.encode('utf-8'), passwordToCheck):
+                return {"code": 0, "userId": id, "firstName": firstName, "lastName": lastName,"message": "Success."}
+        return {"code": 1, "message": "Email or password is incorrect."}
+    else:
+        return {"code": 2, "message": "Account doesn't exist."}
+
 
 def isEmailValid(email):
     return re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9_.+-]+\.[a-zA-Z0-9]{2,}$", email) is not None

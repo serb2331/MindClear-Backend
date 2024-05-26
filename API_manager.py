@@ -54,6 +54,16 @@ def login_API():
     else:
         return jsonify({"message": "Method not allowed"}), 405
 
+
+@app.route('/api/employeeCode', methods=['POST'])
+def employeeCode_API():
+    if request.method == 'POST':
+        requestData = request.get_json()
+        resultData = services.employeeLoginHandler(requestData, sqlConnector)
+        return jsonify(resultData)
+    else:
+        return jsonify({"message": "Method not allowed"}), 405
+
 @app.route('/api/signup', methods=['POST'])
 def signup_API():
     if request.method == 'POST':
