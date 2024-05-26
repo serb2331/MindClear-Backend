@@ -2,7 +2,7 @@ import os
 from openai import AzureOpenAI
 
 class ChatBot:
-    def __init(self):
+    def __init__(self):
         self._client = AzureOpenAI(
         azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT"), 
         api_key=os.getenv("AZURE_OPENAI_API_KEY"),  
