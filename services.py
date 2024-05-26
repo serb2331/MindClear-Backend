@@ -47,7 +47,7 @@ def sendUniqueCode(code):
 
 def loginHandler(requestData, sqlConnector):
     email = requestData["email"]
-    password = requestData["code"]
+    password = requestData["password"]
 
     if sqlConnector.isDataInTable("users", {"email": email}) is True:
         user = sqlConnector.search("users", {"email": email})
