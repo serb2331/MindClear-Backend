@@ -145,8 +145,7 @@ def getNextMessage(requestData, sqlConnector, conversations, conversation_id):
 
 
 def createConversation(sqlConnector, conversations, conversation_id):
-    if conversation_id not in conversations:
-        conversations[conversation_id] = ChatBot()
+    conversations[conversation_id] = ChatBot()
     print(conversations)
 
     response = conversations[conversation_id].startConversation()
